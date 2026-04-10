@@ -1,1 +1,0 @@
-# farik-bot
