@@ -1,24 +1,18 @@
 import os
-import anthropic
+import google.generativeai as genai
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
 
 TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
-ANTHROPIC_KEY = os.environ["ANTHROPIC_KEY"]
+GEMINI_KEY = os.environ["GEMINI_KEY"]
 
-client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+genai.configure(api_key=GEMINI_KEY)
+model = genai.GenerativeModel("gemini-1.5-flash")
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_text = update.message.text
-    
-    message = client.messages.create(
-        model="claude-haiku-4-5-20251001",
-        max_tokens=1024,
-        messages=[{"role": "user", "content": user_text}]
-    )
-    
-    reply = message.content[0].text
-    await update.message.reply_text(reply)
+    response = model.generate_content(user_text)
+    await update.message.reply_text(response.text)
 
 app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
