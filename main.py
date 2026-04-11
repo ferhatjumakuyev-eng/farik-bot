@@ -4,7 +4,8 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
 
 TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
-GEMINI_KEY = os.environ["GEMINI_KEY"]
+GEMINI_KEY = os.environ["GEMINI_API_KEY"]
+
 
 client = genai.Client(api_key=GEMINI_KEY)
 
