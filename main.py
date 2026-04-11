@@ -1,20 +1,17 @@
 import os
-from google import genai
+import google.generativeai as genai
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
 
 TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
-GEMINI_KEY = os.environ["GEMINI_API_KEY"]
+GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 
-
-client = genai.Client(api_key=GEMINI_KEY)
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel("gemini-2.0-flash")
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_text = update.message.text
-    response = client.models.generate_content(
-        model="gemini-2.0-flash",
-        contents=user_text
-    )
+    response = model.generate_content(user_text)
     await update.message.reply_text(response.text)
 
 app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
